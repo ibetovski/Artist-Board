@@ -12,12 +12,16 @@
 <body>
 
 	<div id="mainScene">
-		<button type="button" data-shape="circle">Circle</button>
-		<button type="button" data-shape="rect">Rectangle</button>
-		<button type="button" data-shape="">3</button>
+		<button type="button" class="button-shape" data-shape="circle">Circle</button>
+		<button type="button" class="button-shape" data-shape="rect">Rectangle</button>
+		<button type="button" class="button-shape" data-shape="freehand">Free Hand</button>
+		<br />
 		<canvas width="500" height="500" id="scene-canvas"></canvas>
+		<br />
+		<button type="button" class="button-action" data-action="redraw">Redraw</button>
 	</div>
 
+	<script src="js/Creator.js"></script>
 	<script src="js/index.js"></script>
 </body>
 </html>
