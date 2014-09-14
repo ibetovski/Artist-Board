@@ -39,23 +39,39 @@
 	for(var i=0; i<actionButtons.length; i++) {
 		(function() {
 			actionButtons[i].addEventListener('click', function() {
-				creator.redraw();
+				// get the tracked actions and send them to the server.
+				var actions = creator.getTrackedActions();
+				console.log(actions);
+
+				var r = new XMLHttpRequest();
+				r.open("POST", "http://localhost:8080/track-actions", true);
+				r.onreadystatechange = function () {
+					if (r.readyState != 4 || r.status != 200) return; 
+					console.log(r.responseText);
+				};
+				r.send(JSON.stringify(actions));
+
+				// creator.redraw();
 			});
 		})(i);
 	}
 
+
+
+	// WebSocket comunication.
 	WebSocket = WebSocket || MozWebSocket;
 
 	// listen to sockets
-	var socket = new WebSocket("ws://localhost:8282", 'handshake');
-	console.log(socket.readyState);
+	var socket = new WebSocket("ws://" + window.location.hostname + ":8282", 'handshake');
 
 	socket.onopen = function() {
 		console.log('Sockets connection is established');
 	};
 
 	socket.onmessage = function(event) {
-		console.log('socket data:', event.data);
+		console.log('MESSAGE!');
+		var actions = JSON.parse(event.data);
+		creator.redraw(actions);
 	};
 
 	socket.onerror = function() { 

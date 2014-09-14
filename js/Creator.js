@@ -21,13 +21,27 @@
 	 	_lastDrawingPosition,
 	 	_actions = [];
 
+	 	function trackAction(action, arg) {
+	 		var actionArguments = arg;
+
+	 		// we don't need the entire mouse event structure so we take only what we need.
+	 		if (arg instanceof MouseEvent) {
+	 			actionArguments = {
+	 				offsetX: arg.offsetX,
+	 				offsetY: arg.offsetY
+	 			};
+	 		}
+
+	 		_actions.push({action: action, args: [actionArguments]});
+	 	};
+
 	 	this.getCanvas = function() {
 	 		return canvas;
 	 	};
 
 	 	this.changeShape = function(shape, actionTracking) {
 	 		if (actionTracking) {
-	 			_actions.push({action: "changeShape", args: [shape]});
+	 			trackAction("changeShape", shape);
 	 		}
 
 	 		_shape = shape;
@@ -37,7 +51,7 @@
 		// record user's mouse position
 		this.startDrawing = function(event, actionTracking) {
 			if (actionTracking) {
-				_actions.push({action: "startDrawing", args: [event]});
+				trackAction("startDrawing", event);
 			}
 
 			_startPosition = {
@@ -56,7 +70,7 @@
 		this.stopDrawing = function(event, actionTracking) {
 
 			if (actionTracking) {
-				_actions.push({action: "stopDrawing", args: [event]});
+				trackAction("stopDrawing", event);
 			}
 
 			_endPosition = {
@@ -92,7 +106,7 @@
 				}
 
 				if (actionTracking) {
-					_actions.push({action: "continueDrawing", args: [event]});
+					trackAction("continueDrawing", event);
 				}
 
 				_context.stokeStyle = "black";
@@ -108,24 +122,30 @@
 				_context.stroke();
 			};
 
-			this.redraw = function() {
+			this.redraw = function(actions) {
 
-			// clear the canvas;
-			_context.clearRect(0, 0, _context.canvas.width, _context.canvas.height);
+				actions = actions || _actions;
 
-			// iterate all actions and call every action.
-			var actionItem;
-			var action;
+				// clear the canvas;
+				// _context.clearRect(0, 0, _context.canvas.width, _context.canvas.height);
 
-			var self = this;
+				// iterate all actions and call every action.
+				var actionItem;
+				var action;
 
-			while(_actions.length > 0) {
-				actionItem = _actions.shift();
-				action = actionItem.action;
-				console.log(action, typeof actionItem.action);
-				self[action].apply(self, actionItem.args);
+				var self = this;
+
+				while(actions.length > 0) {
+					actionItem = actions.shift();
+					action = actionItem.action;
+					console.log(action, typeof actionItem.action);
+					self[action].apply(self, actionItem.args);
+				}
+			};
+
+			this.getTrackedActions = function() {
+				return _actions;
 			}
-		};
 	}
 
 	// expose
