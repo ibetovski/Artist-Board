@@ -44,4 +44,28 @@
 		})(i);
 	}
 
+	WebSocket = WebSocket || MozWebSocket;
+
+	// listen to sockets
+	var socket = new WebSocket("ws://localhost:8282", 'handshake');
+	console.log(socket.readyState);
+
+	socket.onopen = function() {
+		console.log('Sockets connection is established');
+	};
+
+	socket.onmessage = function(event) {
+		console.log('socket data:', event.data);
+	};
+
+	socket.onerror = function() { 
+        // websocket is closed.
+        console.log("Socket Error", arguments); 
+    };
+
+	socket.onclose = function() { 
+        // websocket is closed.
+        console.log("Connection is closed...", arguments); 
+    };
+
 })(Creator);

@@ -6,59 +6,57 @@
 	 */
 	function Creator() {
 
-		var canvas = document.getElementById("scene-canvas");
-		if (typeof canvas.getContext != "undefined") {
-			var context = canvas.getContext("2d");
-		} else {
-			canvas.innerHTML = "This browser doesn't support HTML5 canvas";
-			return;
-		}
+	 	var _context;
+	 	var canvas = document.getElementById("scene-canvas");
+	 	if (typeof canvas.getContext != "undefined") {
+	 		_context = canvas.getContext("2d");
+	 	} else {
+	 		canvas.innerHTML = "This browser doesn't support HTML5 canvas";
+	 		return;
+	 	}
 
-		var _shape,
-			_startPosition,
-			_endPosition,
-			_lastDrawingPosition,
-			_actions = [];
+	 	var _shape = "freehand",
+	 	_startPosition,
+	 	_endPosition,
+	 	_lastDrawingPosition,
+	 	_actions = [];
 
-		this.getCanvas = function() {
-			return canvas;
-		}
+	 	this.getCanvas = function() {
+	 		return canvas;
+	 	};
 
-		// if not set, we draw rectangle by default.
-		_shape = "freehand";
+	 	this.changeShape = function(shape, actionTracking) {
+	 		if (actionTracking) {
+	 			_actions.push({action: "changeShape", args: [shape]});
+	 		}
 
-		this.changeShape = function(shape, actionTracking) {
-			if (actionTracking) {
-				_actions.push({action: "changeShape", shape: shape});
-			}
-
-			_shape = shape;
-		}
+	 		_shape = shape;
+		};
 
 		// when the user starts draging.
 		// record user's mouse position
 		this.startDrawing = function(event, actionTracking) {
 			if (actionTracking) {
-				_actions.push({action: "startDrawing", event: event});
+				_actions.push({action: "startDrawing", args: [event]});
 			}
 
 			_startPosition = {
 				x: event.offsetX,
 				y: event.offsetY
-			}
+			};
 
 			this.isDrawing = true;
 
 			// keep last drawing position.
 			_lastDrawingPosition = _startPosition;
-		}
+		};
 
 		// when the user stops dragging.
 		// record user's mouse position
 		this.stopDrawing = function(event, actionTracking) {
 
 			if (actionTracking) {
-				_actions.push({action: "stopDrawing", event: event});
+				_actions.push({action: "stopDrawing", args: [event]});
 			}
 
 			_endPosition = {
@@ -72,47 +70,62 @@
 
 			switch(_shape) {
 				case "rect":
-					context.fillStyle = "black";
-					context.fillRect(_startPosition.x, _startPosition.y, width, height);
-					break;
+				_context.fillStyle = "black";
+				_context.fillRect(_startPosition.x, _startPosition.y, width, height);
+				break;
 				case "circle":
-					context.beginPath();
-					// context.fillStyle = "black";
-					context.arc(_startPosition.x, _startPosition.y, width, 0, Math.PI * 2);
-					context.fill();
-					// context.stroke();
+				_context.beginPath();
+					// _context.fillStyle = "black";
+					_context.arc(_startPosition.x, _startPosition.y, width, 0, Math.PI * 2);
+					_context.fill();
+					// _context.stroke();
 					break;
+				}
+
+				this.isDrawing = false;
+			};
+
+			this.continueDrawing = function(event, actionTracking) {
+				// if not drawing with freehand tool, stop;
+				if (!this.isDrawing || _shape != "freehand") {
+					return;
+				}
+
+				if (actionTracking) {
+					_actions.push({action: "continueDrawing", args: [event]});
+				}
+
+				_context.stokeStyle = "black";
+				_context.lineJoin = "round";
+				_context.lineWidth = 3;
+				_context.moveTo(_lastDrawingPosition.x, _lastDrawingPosition.y);
+
+				// keep the currect position as last.
+				_lastDrawingPosition.x = event.offsetX;
+				_lastDrawingPosition.y = event.offsetY;
+
+				_context.lineTo(event.offsetX, event.offsetY);
+				_context.stroke();
+			};
+
+			this.redraw = function() {
+
+			// clear the canvas;
+			_context.clearRect(0, 0, _context.canvas.width, _context.canvas.height);
+
+			// iterate all actions and call every action.
+			var actionItem;
+			var action;
+
+			var self = this;
+
+			while(_actions.length > 0) {
+				actionItem = _actions.shift();
+				action = actionItem.action;
+				console.log(action, typeof actionItem.action);
+				self[action].apply(self, actionItem.args);
 			}
-
-			this.isDrawing = false;
-		}
-
-		this.continueDrawing = function(event, actionTracking) {
-			// if not drawing with freehand tool, stop;
-			if (!this.isDrawing || _shape != "freehand") {
-				return;
-			}
-
-			if (actionTracking) {
-				_actions.push({action: "continueDrawing", event: event});
-			}
-
-			context.stokeStyle = "black";
-			context.lineJoin = "round";
-			context.lineWidth = 3;
-			context.moveTo(_lastDrawingPosition.x, _lastDrawingPosition.y);
-
-			// keep the currect position as last.
-			_lastDrawingPosition.x = event.offsetX;
-			_lastDrawingPosition.y = event.offsetY;
-
-			context.lineTo(event.offsetX, event.offsetY);
-			context.stroke();
-		}
-
-		this.redraw = function() {
-			console.log(_actions);
-		}
+		};
 	}
 
 	// expose
