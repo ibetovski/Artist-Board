@@ -40,16 +40,7 @@
 		(function() {
 			actionButtons[i].addEventListener('click', function() {
 				// get the tracked actions and send them to the server.
-				var actions = creator.getTrackedActions();
-				console.log(actions);
-
-				var r = new XMLHttpRequest();
-				r.open("POST", "http://localhost:8080/track-actions", true);
-				r.onreadystatechange = function () {
-					if (r.readyState != 4 || r.status != 200) return; 
-					console.log(r.responseText);
-				};
-				r.send(JSON.stringify(actions));
+				creator.clearScene(true);
 
 				// creator.redraw();
 			});
