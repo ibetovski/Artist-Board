@@ -1,8 +1,20 @@
-(function(Creator) {
+(function(Creator, Messenger) {
 
 	"use strict";
 
-	var creator = new Creator();
+	// The callback will be executed when new socket message appears.
+	var messenger = new Messenger({
+		onNewMessage: function(actions) {
+			creator.redraw(actions);
+		}
+	});
+
+	var creator = new Creator({
+		sendActions: function(actions) {
+			messenger.send(actions);
+		}
+	});
+
 	var canvas = creator.getCanvas();
 
 	// listen for click and get mouse position.
@@ -32,7 +44,6 @@
 		})(i);
 	}
 
-
 	// keep all the actions and repeat them.
 	var actionButtons = document.getElementsByClassName("button-action");
 
@@ -41,38 +52,8 @@
 			actionButtons[i].addEventListener('click', function() {
 				// get the tracked actions and send them to the server.
 				creator.clearScene(true);
-
-				// creator.redraw();
 			});
 		})(i);
 	}
 
-
-
-	// WebSocket comunication.
-	WebSocket = WebSocket || MozWebSocket;
-
-	// listen to sockets
-	var socket = new WebSocket("ws://" + window.location.hostname + ":8282", 'handshake');
-
-	socket.onopen = function() {
-		console.log('Sockets connection is established');
-	};
-
-	socket.onmessage = function(event) {
-		console.log('MESSAGE!');
-		var actions = JSON.parse(event.data);
-		creator.redraw(actions);
-	};
-
-	socket.onerror = function() { 
-        // websocket is closed.
-        console.log("Socket Error", arguments); 
-    };
-
-	socket.onclose = function() { 
-        // websocket is closed.
-        console.log("Connection is closed...", arguments); 
-    };
-
-})(Creator);
+})(Creator, Messenger);

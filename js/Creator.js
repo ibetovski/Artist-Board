@@ -8,7 +8,7 @@
 	/**
 	 * The creator of all shapes.
 	 */
-	 function Creator() {
+	 function Creator(callbacks) {
 
 	 	trackTime();
 
@@ -34,13 +34,9 @@
 
 	 	function sendActions(actionsToSend) {
 	 		isSender = true;
-	 		var r = new XMLHttpRequest();
-	 		r.open("POST", "http://localhost:8080/track-actions", true);
-	 		r.onreadystatechange = function () {
-	 			if (r.readyState != 4 || r.status != 200) return; 
-	 			console.log(r.responseText);
-	 		};
-	 		r.send(JSON.stringify(actionsToSend));
+	 		if (typeof callbacks.sendActions === 'function') {
+	 			callbacks.sendActions.call(this, JSON.stringify(actionsToSend));
+	 		}
 	 	}
 
 	 	function trackAction(action, arg) {
@@ -60,24 +56,20 @@
 	 		// track the last action time;
 	 		_lastActionTime = getCurrentTime();
 
-	 		console.log(getCurrentTime() - _lastActionTime);
-
-	 		// count the actions, when we reach some amount of actions, send them to the server.
-	 		// track the time as well.
-	 		// if we have less actions for a short period, send them too;
+	 		// count the actions, when we reach some amount of actions, send them to the server.		
 	 		if (_actions.length > maxActionsToSend) {
-	 			console.log('> 20');
 	 			_actionsToSend = _actions.splice(0,maxActionsToSend - 1);
 
 	 			sendActions(_actionsToSend);
 	 		}
 	 	};
 
+		// track the time as well.
+	 	// if we have less actions for a short period, send them too;
 	 	function trackTime() {
 	 		var interval = setInterval(function() {
 	 			if (_lastActionTime && (getCurrentTime() - _lastActionTime) > 1000) {
 	 				if (_actions.length > 0 && _actions.length <= maxActionsToSend) {
-	 					console.log('-------...', _actions.length);
 	 					sendActions(_actions);
 	 					_actions = [];
 	 				}
@@ -209,7 +201,6 @@
 			while(actions.length > 0) {
 				actionItem = actions.shift();
 				action = actionItem.action;
-				console.log(action, typeof actionItem.action);
 				self[action].apply(self, actionItem.args);
 			}
 		};
