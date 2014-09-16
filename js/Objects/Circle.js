@@ -7,7 +7,7 @@
 			y: options.y
 		};
 
-		this.name = 'Circle';
+		this.name = 'circle';
 		this.context = options.context;
 
 		this.continueDrawing = function() {}

@@ -2,7 +2,9 @@
 (function(exports, Circle, Rectangle, FreeHand) {
 	"use strict";
 
-	function ToolFactory() {};
+	function ToolFactory(canvas) {
+		this.canvas = canvas;
+	};
 
 	// by Default we will create freehand tool.
 	ToolFactory.prototype.toolClass = FreeHand;
@@ -19,6 +21,9 @@
 				this.toolClass = FreeHand;
 				break;
 		}
+
+		// new context for every shape;
+		options.context = this.canvas.getContext("2d");
 
 		console.log('[Factor] Create tool');
 		return new this.toolClass(options);

@@ -7,7 +7,7 @@
 			y: options.y
 		};
 
-		this.name = 'FreeHand';
+		this.name = 'freehand';
 		this.context = options.context;
 
 		// console.log('context:', this.context);

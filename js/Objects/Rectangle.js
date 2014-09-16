@@ -8,7 +8,7 @@
 			y: options.y
 		};
 
-		this.name = 'Rectangle';
+		this.name = 'rect';
 		this.context = options.context;
 
 		this.continueDrawing = function() {		}

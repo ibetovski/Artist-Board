@@ -23,35 +23,31 @@
 	// listen for click and get mouse position.
 
 
-	var _actions;
-	// function trackAction(action, arg) {
-	// 	var actionArguments = arg;
-	// 	var _actionsToSend;
+	var _actions = [];
 
-	// 	// we don't need the entire mouse event structure so we take only what we need.
-	// 	if (arg instanceof MouseEvent) {
-	// 		actionArguments = {
-	// 			clientX: arg.clientX,
-	// 			clientY: arg.clientY
-	// 		};
-	// 	}
+	function trackToolCreation(toolType, beginX, beginY, endX, endY) {
+		_actions.push({
+			toolType: toolType,
+			beginX: beginX,
+			beginY: beginY,
+			endX: endX,
+			endY: endY
+		});
 
-	// 	_actions.push({action: action, args: [actionArguments]});
+		// track the last action time;
+		// _lastActionTime = getCurrentTime();
 
-	// 	// track the last action time;
-	// 	// _lastActionTime = getCurrentTime();
+		// count the actions, when we reach some amount of actions, send them to the server.		
+		// if (_actions.length > maxActionsToSend) {
+		// 	_actionsToSend = _actions.splice(0,maxActionsToSend - 1);
 
-	// 	// count the actions, when we reach some amount of actions, send them to the server.		
-	// 	// if (_actions.length > maxActionsToSend) {
-	// 	// 	_actionsToSend = _actions.splice(0,maxActionsToSend - 1);
-
-	// 	// 	sendActions(_actionsToSend);
-	// 	// }
-	// };
+		// 	sendActions(_actionsToSend);
+		// }
+	};
 
 	var tool;
 	var currentToolType;
-	var toolCreator = new ToolFactory();
+	var toolCreator = new ToolFactory(canvas);
 
 	/**
 	 * Use this to fix the differences between Chrome and Mozila.
@@ -79,31 +75,36 @@
 
 	canvas.addEventListener("mousedown", function(event) {
 		var e = fixEvent(event);
-		console.log('1', currentToolType);
+
 		tool = toolCreator.createTool({
 			toolType: currentToolType,
 			x: e.offsetX,
-			y: e.offsetY,
-			context: context
+			y: e.offsetY
 		});
 
 		tool.startDrawing();
+		// trackAction("startDrawing", e.offsetX, e.offsetY, currentToolType);
 
 		// creator.startDrawing(event, true);
 	}, false);
 
 	canvas.addEventListener("mousemove", function(event) {
 		var e = fixEvent(event);
-		console.log('2');
+
 		if (typeof tool != "undefined") {
 			tool.continueDrawing(e.offsetX, e.offsetY);
+			// trackAction("continueDrawing", e.offsetX, e.offsetY, currentToolType);
 		}
 	}, false);
 
 	canvas.addEventListener("mouseup", function(event) {
 		var e = fixEvent(event);
+
 		tool.stopDrawing(e.offsetX, e.offsetY);
+		trackToolCreation(tool.name, tool.startPosition.x, tool.startPosition.y, e.offsetX, e.offsetY);
 	}, false);
+
+	window._actions = _actions;
 
 
 

@@ -1,5 +1,5 @@
 
-// TODO: This file should be cleaned.
+// TODO: This file should be cleaned/removed
 (function(exports) {
 	"use strict";
 
