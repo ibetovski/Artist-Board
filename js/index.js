@@ -102,7 +102,7 @@
 
 	canvas.addEventListener("mouseup", function(event) {
 		var e = fixEvent(event);
-		tool.stopDrawing(e);
+		tool.stopDrawing(e.offsetX, e.offsetY);
 	}, false);
 
 
