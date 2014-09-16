@@ -25,7 +25,7 @@
 	}
 
 	// inheritance
-	Rectangle.prototype = new Tool();
+	Rectangle.prototype = Tool.prototype;
 	Rectangle.prototype.constructor = Rectangle;
 
 	exports.Rectangle = Rectangle;

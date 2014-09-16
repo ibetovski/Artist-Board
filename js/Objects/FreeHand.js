@@ -40,7 +40,7 @@
 	}
 
 	// inheritance
-	FreeHand.prototype = new Tool();
+	FreeHand.prototype = Tool.prototype;
 	FreeHand.prototype.constructor = FreeHand;
 
 	exports.FreeHand = FreeHand;

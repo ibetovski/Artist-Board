@@ -24,7 +24,7 @@
 	}
 
 	// inheritance
-	Circle.prototype = new Tool();
+	Circle.prototype = Tool.prototype;
 	Circle.prototype.constructor = Circle;
 
 	exports.Circle = Circle;
