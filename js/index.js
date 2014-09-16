@@ -1,53 +1,28 @@
-(function(Creator, Messenger, ToolFactory) {
+(function(Creator, Messenger, ToolFactory, ActionTracker) {
 
 	"use strict";
 
 	// The callback will be executed when new socket message appears.
 	// todo: better with promises.
-	// var messenger = new Messenger({
-	// 	onNewMessage: function(actions) {
-	// 		creator.drawByActions(actions);
-	// 	}
-	// });
-
-	// todo: better with promises.
-	var creator = new Creator({
-		sendActions: function(actions) {
-			messenger.send(actions);
+	var messenger = new Messenger({
+		onNewMessage: function(actions) {
+			// creator.drawByActions(actions);
 		}
 	});
 
-	var canvas = creator.getCanvas();
-	var context = canvas.getContext("2d");
+	// todo: better with promises.
+	var canvas = document.getElementById("scene-canvas");
+ 	if (typeof canvas.getContext == "undefined") {
+ 		canvas.innerHTML = "This browser doesn't support HTML5 canvas";
+ 		return;
+ 	}
 
 	// listen for click and get mouse position.
-
-
-	var _actions = [];
-
-	function trackToolCreation(toolType, beginX, beginY, endX, endY) {
-		_actions.push({
-			toolType: toolType,
-			beginX: beginX,
-			beginY: beginY,
-			endX: endX,
-			endY: endY
-		});
-
-		// track the last action time;
-		// _lastActionTime = getCurrentTime();
-
-		// count the actions, when we reach some amount of actions, send them to the server.		
-		// if (_actions.length > maxActionsToSend) {
-		// 	_actionsToSend = _actions.splice(0,maxActionsToSend - 1);
-
-		// 	sendActions(_actionsToSend);
-		// }
-	};
 
 	var tool;
 	var currentToolType;
 	var toolCreator = new ToolFactory(canvas);
+	var actionTracker = new ActionTracker({onEmit: messenger.send.bind(messenger)});
 
 	/**
 	 * Use this to fix the differences between Chrome and Mozila.
@@ -83,9 +58,6 @@
 		});
 
 		tool.startDrawing();
-		// trackAction("startDrawing", e.offsetX, e.offsetY, currentToolType);
-
-		// creator.startDrawing(event, true);
 	}, false);
 
 	canvas.addEventListener("mousemove", function(event) {
@@ -93,7 +65,6 @@
 
 		if (typeof tool != "undefined") {
 			tool.continueDrawing(e.offsetX, e.offsetY);
-			// trackAction("continueDrawing", e.offsetX, e.offsetY, currentToolType);
 		}
 	}, false);
 
@@ -101,11 +72,8 @@
 		var e = fixEvent(event);
 
 		tool.stopDrawing(e.offsetX, e.offsetY);
-		trackToolCreation(tool.name, tool.startPosition.x, tool.startPosition.y, e.offsetX, e.offsetY);
+		actionTracker.add(tool.name, tool.startPosition.x, tool.startPosition.y, e.offsetX, e.offsetY);
 	}, false);
-
-	window._actions = _actions;
-
 
 
 
@@ -133,4 +101,4 @@
 		})(i);
 	}
 
-})(Creator, Messenger, ToolFactory);
+})(Creator, Messenger, ToolFactory, ActionTracker);

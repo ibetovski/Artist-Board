@@ -30,7 +30,7 @@
 	    };	    
 
 	    this.send = function(data) {
-	    	console.log('[Messenger] Sending actions...');
+	    	console.log('[Messenger] Sending actions...', data);
 	    	var r = new XMLHttpRequest();
 	 		r.open("POST", "http://" + window.location.hostname + ':8080/track-actions', true);
 	 		r.onreadystatechange = function () {
