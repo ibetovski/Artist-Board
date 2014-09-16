@@ -9,7 +9,6 @@
 	 * The creator of all shapes.
 	 */
 	 function Creator(callbacks) {
-
 	 	trackTime();
 
 	 	var _context;
@@ -39,30 +38,30 @@
 	 		}
 	 	}
 
-	 	function trackAction(action, arg) {
-	 		var actionArguments = arg;
-	 		var _actionsToSend;
+	 	// function trackAction(action, arg) {
+	 	// 	var actionArguments = arg;
+	 	// 	var _actionsToSend;
 
-	 		// we don't need the entire mouse event structure so we take only what we need.
-	 		if (arg instanceof MouseEvent) {
-	 			actionArguments = {
-	 				offsetX: arg.offsetX,
-	 				offsetY: arg.offsetY
-	 			};
-	 		}
+	 	// 	// we don't need the entire mouse event structure so we take only what we need.
+	 	// 	if (arg instanceof MouseEvent) {
+	 	// 		actionArguments = {
+	 	// 			offsetX: arg.offsetX,
+	 	// 			offsetY: arg.offsetY
+	 	// 		};
+	 	// 	}
 
-	 		_actions.push({action: action, args: [actionArguments]});
+	 	// 	_actions.push({action: action, args: [actionArguments]});
 
-	 		// track the last action time;
-	 		_lastActionTime = getCurrentTime();
+	 	// 	// track the last action time;
+	 	// 	_lastActionTime = getCurrentTime();
 
-	 		// count the actions, when we reach some amount of actions, send them to the server.		
-	 		if (_actions.length > maxActionsToSend) {
-	 			_actionsToSend = _actions.splice(0,maxActionsToSend - 1);
+	 	// 	// count the actions, when we reach some amount of actions, send them to the server.		
+	 	// 	if (_actions.length > maxActionsToSend) {
+	 	// 		_actionsToSend = _actions.splice(0,maxActionsToSend - 1);
 
-	 			sendActions(_actionsToSend);
-	 		}
-	 	};
+	 	// 		sendActions(_actionsToSend);
+	 	// 	}
+	 	// };
 
 		// track the time as well.
 	 	// if we have less actions for a short period, send them too;
@@ -91,21 +90,21 @@
 
 		// when the user starts draging.
 		// record user's mouse position
-		this.startDrawing = function(event, actionTracking) {
-			if (actionTracking) {
-				trackAction("startDrawing", event);
-			}
+		// this.startDrawing = function(event, actionTracking) {
+		// 	if (actionTracking) {
+		// 		trackAction("startDrawing", event);
+		// 	}
 
-			_startPosition = {
-				x: event.offsetX,
-				y: event.offsetY
-			};
+		// 	_startPosition = {
+		// 		x: event.offsetX,
+		// 		y: event.offsetY
+		// 	};
 
-			this.isDrawing = true;
+		// 	this.isDrawing = true;
 
-			// keep last drawing position.
-			_lastDrawingPosition = _startPosition;
-		};
+		// 	// keep last drawing position.
+		// 	_lastDrawingPosition = _startPosition;
+		// };
 
 		// when the user stops dragging.
 		// record user's mouse position
@@ -183,7 +182,7 @@
 			// _context.clearRect(0, 0, _context.canvas.width, _context.canvas.height);
 		};
 
-		this.redraw = function(actions) {
+		this.drawByActions = function(actions) {
 
 			// If I am the sender, do nothing.
 			if (isSender) {
