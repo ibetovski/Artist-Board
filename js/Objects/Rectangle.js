@@ -15,8 +15,7 @@
 
 		this.stopDrawing = function(x, y) {
 
-			this.width = x - this.startPosition.x;
-			this.height = y - this.startPosition.y;
+			Rectangle.prototype.stopDrawing.apply(this, arguments);
 
 			this.fillStyle = "black";
 			this.context.fillRect(this.startPosition.x, this.startPosition.y, this.width, this.height);
