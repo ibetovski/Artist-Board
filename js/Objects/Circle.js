@@ -2,11 +2,6 @@
 	"use strict";
 	function Circle(options) {
 
-		this.startPosition = {
-			x: options.x,
-			y: options.y
-		};
-
 		this.name = 'circle';
 		this.context = options.context;
 
@@ -18,7 +13,7 @@
 
 			this.context.beginPath();
 			// this.context.fillStyle = "black";
-			this.context.arc(this.startPosition.x, this.startPosition.y, this.width, 0, Math.PI * 2);
+			this.context.arc(this.startX, this.startY, this.width, 0, Math.PI * 2);
 			this.context.fill();
 		}
 	}

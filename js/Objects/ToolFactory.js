@@ -7,7 +7,7 @@
 	};
 
 	// by Default we will create freehand tool.
-	ToolFactory.prototype.toolClass = FreeHand;
+	ToolFactory.prototype.toolClass = Rectangle;
 
 	ToolFactory.prototype.createTool = function(options) {
 		switch(options.toolType) {

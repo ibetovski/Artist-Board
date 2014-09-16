@@ -1,4 +1,4 @@
-(function(Creator, Messenger, ToolFactory, ActionTracker) {
+(function(Messenger, ToolFactory, ActionTracker) {
 
 	"use strict";
 
@@ -7,6 +7,16 @@
 	var messenger = new Messenger({
 		onNewMessage: function(actions) {
 			// creator.drawByActions(actions);
+
+			for (var i in actions) {
+				toolCreator.createTool({ toolType: actions[i].toolType }).
+					create({
+						startX: actions[i].startX,
+						startY: actions[i].startY,
+						endX: actions[i].endX,
+						endY: actions[i].endY
+					});
+			}
 		}
 	});
 
@@ -48,16 +58,20 @@
 	    return e;
 	}
 
+	var _startX,
+		_startY;
+
 	canvas.addEventListener("mousedown", function(event) {
 		var e = fixEvent(event);
 
 		tool = toolCreator.createTool({
-			toolType: currentToolType,
-			x: e.offsetX,
-			y: e.offsetY
+			toolType: currentToolType
 		});
 
-		tool.startDrawing();
+		_startX = e.offsetX;
+		_startY = e.offsetY;
+
+		// tool.startDrawing();
 	}, false);
 
 	canvas.addEventListener("mousemove", function(event) {
@@ -71,8 +85,15 @@
 	canvas.addEventListener("mouseup", function(event) {
 		var e = fixEvent(event);
 
-		tool.stopDrawing(e.offsetX, e.offsetY);
-		actionTracker.add(tool.name, tool.startPosition.x, tool.startPosition.y, e.offsetX, e.offsetY);
+		tool.create({
+			startX: _startX,
+			startY: _startY,
+			endX: event.offsetX,
+			endY: event.offsetY
+		});
+
+		// tool.stopDrawing(e.offsetX, e.offsetY);
+		actionTracker.add(tool.name, tool.startX, tool.startY, e.offsetX, e.offsetY);
 	}, false);
 
 
@@ -101,4 +122,4 @@
 		})(i);
 	}
 
-})(Creator, Messenger, ToolFactory, ActionTracker);
+})(Messenger, ToolFactory, ActionTracker);

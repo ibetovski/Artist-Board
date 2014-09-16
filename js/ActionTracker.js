@@ -17,11 +17,11 @@
 		this.checkTime();
 	}
 
-	ActionTracker.prototype.add = function(toolType, beginX, beginY, endX, endY) {
+	ActionTracker.prototype.add = function(toolType, startX, startY, endX, endY) {
 		_actions.push({
 			toolType: toolType,
-			beginX: beginX,
-			beginY: beginY,
+			startX: startX,
+			startY: startY,
 			endX: endX,
 			endY: endY
 		});

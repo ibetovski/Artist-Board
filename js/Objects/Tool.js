@@ -19,6 +19,15 @@
 		this.isDrawing = false;
 		this.lastDrawingPosition = {};
 	}
+
+	Tool.prototype.create = function(options) {
+		this.startX = options.startX;
+		this.startY = options.startY;
+		this.endX = options.endX;
+		this.endY = options.endY;
+
+		this.stopDrawing();
+	}
 	
 	Tool.prototype.startDrawing = function(event) {
 		this.isDrawing = true;
@@ -40,8 +49,8 @@
 		};
 
 		// calculate the size:
-		this.width = x - this.startPosition.x;
-		this.height = y - this.startPosition.y;
+		this.width = this.endX - this.startX;
+		this.height = this.endY - this.startY;
 
 		this.isDrawing = false;
 	}
